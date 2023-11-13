@@ -1,0 +1,11 @@
+.calendar {
+    position: absolute;
+    height: 50%;
+    width: 90%;
+    border: 2px solid black;
+    left: 4.5%;
+  }
+  
+  .month-name {
+    height: 10px;
+  }
