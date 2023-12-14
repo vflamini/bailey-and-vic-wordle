@@ -1,8 +1,9 @@
 html {
   user-select: none;
+  -webkit-user-select: none;
 }
 
-path {
+#curve {
   fill: transparent;
 }
   

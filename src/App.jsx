@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import Login from './pages/login.jsx'
 import Landing from './pages/landing.jsx'
+import Wordle from './pages/wordle.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -11,7 +12,7 @@ function App() {
     <>
       <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'></link>
       <link href='https://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet'></link>
-      <Landing />
+      <Wordle />
     </>
   )
 }

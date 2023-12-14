@@ -13,6 +13,7 @@ function Login() {
     <>
       <div className="main-title">
         <h1 style={{fontFamily: "Roboto", fontSize: "50px", opacity: "0"}} className={`${wordleAnimationClass}`}>WORDLE</h1>
+        <br></br>
         <h1 style={{fontFamily: "Dancing Script", opacity: "0"}} className={`${withAnimationClass}`}>with</h1>
         <div className="curved-text">
           <svg viewBox="0 0 500 500">

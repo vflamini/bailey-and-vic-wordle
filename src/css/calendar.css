@@ -1,11 +1,80 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes scaleAnimation {
+  0%, 100% {
+    transform: scale(1); /* Initial and final scale */
+  }
+  50% {
+    transform: scale(1.05); /* Scale up to 1.2 at 50% of the animation */
+  }
+}
+
 .calendar {
-    position: absolute;
-    height: 50%;
-    width: 90%;
-    border: 2px solid black;
-    left: 4.5%;
-  }
+  position: relative;
+  max-width: 700px;
+  border: 2px solid black;
+  opacity: 0;
+  animation: fadeIn 2s ease-in-out forwards 2.6s, jump 0.5s ease-in-out forwards 2.6s;
+}
   
-  .month-name {
-    height: 10px;
-  }
+.month-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 30px;
+  font-size: 28px;
+  border-bottom: 2px solid black;
+}
+
+.days-of-week {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.day-header {
+  width: 85%;
+}
+
+.days-container {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5%, 1fr));
+  column-gap: 1px;
+  row-gap: 1px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2px;
+}
+
+.day {
+  width: 85%;
+  height: 6vh;
+  text-align: right;
+  border: 2px solid black;
+}
+
+.selected-day {
+  border: 2px solid rgb(0, 255, 0);
+  animation: scaleAnimation 0.8s ease-in-out infinite;
+}
