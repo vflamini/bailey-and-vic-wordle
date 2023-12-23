@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import '../css/calendar.css'
 
-function Calendar() {
+function Calendar({setSelectedDate}) {
   const [wordleAnimationClass, setWordleAnimationClass] = useState('');
   const [withAnimationClass, setWithAnimationClass] = useState('');
   const day_abbr = ["Su", "M", "Tu", "W", "Th", "F", "Sa"];
@@ -16,6 +16,7 @@ function Calendar() {
 
   const handleBoxClick = (boxIndex) => {
     setSelectedBox(boxIndex >= current_day && selectedMonth === month ? current_day : boxIndex);
+    setSelectedDate(boxIndex >= current_day && selectedMonth === month ? selectedYear + "-" + selectedMonth.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0') : selectedYear + "-" + selectedMonth.toString().padStart(2, '0') + "-" + boxIndex.toString().padStart(2, '0'))
   };
 
   const handleMonthChange = (direction) => {
@@ -27,7 +28,7 @@ function Calendar() {
         newMonth = 1;
         newYear += 1
       }
-      if (newYear === year && newMonth > month) {
+      if ((newYear === year && newMonth > month) || newYear > year) {
         return;
       }
     } else if(direction === "-") {

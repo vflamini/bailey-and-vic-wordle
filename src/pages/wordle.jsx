@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { ip } from '../config/ip';
 import Keyboard from '../objects/keyboard.jsx';
 import ColorPickerButton from '../objects/colorpickerbutton.jsx';
 import getFontColor from '../functions/getFontColor.js';
@@ -8,6 +10,8 @@ import '../css/wordle.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 
 function Wordle() {
+  const location = useLocation();
+  const {wordleDate, playerName} = location.state || {};
   const [guesses, setGuess] = useState(
     [
       ['','','','',''],
@@ -18,10 +22,24 @@ function Wordle() {
       ['','','','','']
     ]
   );
+  const [otherGuesses, setOtherGuesses] = useState(
+    [
+      ['','','','',''],
+      ['','','','',''],
+      ['','','','',''],
+      ['','','','',''],
+      ['','','','',''],
+      ['','','','','']
+    ]
+  );
+  const [wordleId, setWordleId] = useState(0);
+  const [isCorrect, setCorrect] = useState(false);
+  const [otherCorrect, setOtherCorrect] = useState(false);
   const [guessNumber, setGuessNumber] = useState(1);
-  const [correctColor, setCorrectColor] = useState('#0c6b11');
-  const [wrongColor, setWrongColor] = useState('#61690f');
-  const [victoryColor, setVictoryColor] = useState('#37edb6');
+  const [otherGuessNumber, setOtherGuessNumber] = useState(null);
+  const [correctColor, setCorrectColor] = useState('');
+  const [wrongColor, setWrongColor] = useState('');
+  const [victoryColor, setVictoryColor] = useState('');
   const [flipAnimationClass, setFlipAnimationClass] = useState(["letter-guess flip-card-inner","letter-guess flip-card-inner","letter-guess flip-card-inner","letter-guess flip-card-inner","letter-guess flip-card-inner","letter-guess flip-card-inner"]);
   const [withAnimationClass, setWithAnimationClass] = useState('');
   const [sepClass, setSepClass] = useState('full-page first-page');
@@ -42,33 +60,143 @@ function Wordle() {
   // Format the date as "YYYY-MM-DD"
   const formattedDate = `${year}-${month}-${day}`;
 
+  const getPlayerInfo = async () => {
+    await fetch(ip + `/api/get/players/player_name/${playerName}`)
+      .then(res => res.json())
+      .then(data => {
+        const player_entry = data[0];
+        console.log(player_entry.correct_tile_color);
+        setCorrectColor(player_entry.correct_tile_color !== null ? player_entry.correct_tile_color : '#0c6b11');
+        setWrongColor(player_entry.wrong_place_tile_color !== null ? player_entry.wrong_place_tile_color : '#61690f');
+        setVictoryColor(player_entry.victory_message_color !== null ? player_entry.victory_message_color : '#37edb6');
+        getGuesses();
+      })
+      .catch(err => console.log(err))
+  }
+
+  const getOtherGuesses = async () => {
+    let otherPlayerName;
+    if (playerName === "Vic") {
+      otherPlayerName = "Bailey";
+    } else {
+      otherPlayerName = "Vic"
+    }
+    await fetch(ip + `/api/getguesses/${wordleId}/${otherPlayerName}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        data.forEach(guess => {
+          if (guess.is_correct) {
+            setOtherCorrect(true);
+            setOtherGuessNumber(guess.guess_number);
+          }
+          setOtherGuesses((prevGuesses) => {
+            const newGuesses = [...prevGuesses];
+            newGuesses[guess.guess_number - 1] = guess.guess.split('');
+            return newGuesses;
+          })
+        })
+      })
+  }
+
+  const getGuesses = async () => {
+    console.log(ip + `/api/getguesses/${wordleId}/${playerName}`);
+    await fetch(ip + `/api/getguesses/${wordleId}/${playerName}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        data.forEach(guess => {
+          if (guess.is_correct) {
+            setCorrect(true);
+            setShowPopup(true);
+          }
+          setGuess((prevGuesses) => {
+            const newGuesses = [...prevGuesses];
+            newGuesses[guess.guess_number - 1] = guess.guess.split('');
+            return newGuesses;
+          })
+          setGuessNumber(guess.guess_number + 1);
+        })
+      })
+    let otherPlayerName;
+    if (playerName === "Vic") {
+      otherPlayerName = "Bailey";
+    } else {
+      otherPlayerName = "Vic";
+    }
+    await fetch(ip + `/api/getguesses/${wordleId}/${otherPlayerName}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        data.forEach(guess => {
+          if (guess.is_correct) {
+            setOtherCorrect(true);
+            setOtherGuessNumber(guess.guess_number);
+          }
+          setOtherGuesses((prevGuesses) => {
+            const newGuesses = [...prevGuesses];
+            newGuesses[guess.guess_number - 1] = guess.guess.split('');
+            return newGuesses;
+          })
+        })
+      })
+  }
+
+  const handleRefreshGuesses = async () => {
+    await getOtherGuesses();
+  }
+
   useEffect(() => {
-    const getWordleWord = async () => {
-      // let headers = new Headers({
-      //   "Accept": "*/*",
-      //   "Content-Type": "application/x-www-form-urlencoded",
-      //   "User-Agent": 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36',
-      //   "Accept-Language": "en-US,en;q=0.9",
-      //   "Sec-Fetch-Mode": "cors",
-      //   "Sec-Fetch-Site": "same-origin",
-      //   "Accept-Encoding": "gzip, deflate, br"
-      // })
+    const wordleStored = async () => {
+      await fetch(ip + `/api/get/wordle/wordle_date/${encodeURIComponent(wordleDate) + ' 00:00:00'}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data[0]) {
+            setCorrectWord(data[0].solution);
+            setWordleId(data[0].wordle_id);
+            getGuesses();
+          } else {
+            setCorrectWord('');
+          }
+        })
+    }
+
+    const getWordleWordExternal = async () => {
       let corrWord;
+      let wid;
       const headers = new Headers({
         "Cookie": "nyt-gdpr=0"
       });
       console.log(formattedDate);
-      await fetch('http://108.24.100.247:5000/solution/' + formattedDate, {
+      await fetch(ip + '/solution/' + wordleDate, {
         method: "GET"
-      }).then(res => res.text())
-        .then(data => {
-          corrWord = data;
+      }).then(res => res.json())
+        .then(async data => {
+          console.log(data);
+          corrWord = data.solution;
+          wid = data.days_since_launch;
+          await fetch(ip + `/api/insert/wordle/wordle_id/${data.days_since_launch}`, {method: 'POST'})
+            .then(async res => {
+              await fetch(ip + `/api/update/wordle/wordle_date/${encodeURIComponent(data.print_date + ' 00:00:00')}/wordle_id/${data.days_since_launch}`, {method: 'POST'})
+                .then(async res => {
+                  await fetch(ip + `/api/update/wordle/solution/${data.solution.toUpperCase()}/wordle_id/${data.days_since_launch}`, {method: 'POST'})
+                })
+            })
+            .catch(err => {
+              console.log(err);
+            })
         })
         .catch(err => console.log(err));
       setCorrectWord(corrWord.toUpperCase());
+      setWordleId(wid);
+      getGuesses();
     }
-    getWordleWord();
-  }, []);
+    wordleStored();
+    if (correctWord === '') {
+      getWordleWordExternal();
+    }
+    getPlayerInfo();
+  }, [wordleId]);
 
   const findTilePlacement = (guess, guessNum, returnWrongTile, corrWord, tiles = ['','','','','']) => {
     let additor = 5 - guess.length;
@@ -92,10 +220,13 @@ function Wordle() {
         } else if (lettersLeft.includes(letter)) {
           if (guess.slice(idx + 1, guess.length)) {
             if (guess.slice(idx + 1, guess.length).includes(letter)) {
-              [tiles, lettersLeft] = findTilePlacement(guess.slice(idx + 1, guess.length), guessNum, false, tiles, lettersLeft);
+              [tiles, lettersLeft] = findTilePlacement(guess.slice(idx + 1, guess.length), guessNum, false, lettersLeft.join(''), tiles);
               if (tiles[idx] === '') {
                 if (lettersLeft.includes(letter)) {
                   tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-place-${idx + 1}`} style={{transition: `background-color 0.2s linear ${idx * 0.45}s`, backgroundColor: wrongColor}}>{letter}</div>
+                  let removeIdx = lettersLeft.findIndex((removedLetter) => removedLetter === letter);
+                  lettersLeft[removeIdx] = '-';
+                  lWrongPlaceLetters.push(letter);
                 } else {
                   lWrongLetters.push(letter)
                   tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-${idx + 1}`}>{letter}</div>;
@@ -134,6 +265,33 @@ function Wordle() {
     return [tiles, lettersLeft];
   }
 
+  const handleCorrectColorChange = (color) => {
+    setCorrectColor(color);
+    changeCorrectColor(color);
+  }
+
+  const changeCorrectColor = async (color) => {
+    await fetch(ip + `/api/update/players/correct_tile_color/${encodeURIComponent(color)}/player_name/${playerName}`, {method: 'POST'})
+  }
+
+  const handleWrongColorChange = (color) => {
+    setWrongColor(color);
+    changeWrongColor(color);
+  }
+
+  const changeWrongColor = async (color) => {
+    await fetch(ip + `/api/update/players/wrong_place_tile_color/${encodeURIComponent(color)}/player_name/${playerName}`, {method: 'POST'})
+  }
+
+  const handleVictoryColorChange = (color) => {
+    setVictoryColor(color);
+    changeVictoryColor(color);
+  }
+
+  const changeVictoryColor = async (color) => {
+    await fetch(ip + `/api/update/players/victory_message_color/${encodeURIComponent(color)}/player_name/${playerName}`, {method: 'POST'})
+  }
+
   return (
     <>
       {showPopup && (
@@ -155,6 +313,7 @@ function Wordle() {
               </div>
             </div>
             <div className="guess-dist">
+              <div style={{width: "80vw", textAlign: "center", color: "red", fontSize: "20px"}}>SOLVE SCORE: 106789</div> <br></br>
               GUESS DISTRIBUTION <br></br><br></br>
               <div className="all-guesses">
                 <div className="bar">
@@ -185,10 +344,10 @@ function Wordle() {
         </div>
       )}
       <div className="top-bar">
-        <ColorPickerButton text={"correct tile"} defaultColor={"#0c6b11"} setColor={setCorrectColor}/>
-        <ColorPickerButton text={"wrong place tile"} defaultColor={"#61690f"} setColor={setWrongColor}/>
-        <ColorPickerButton text={"victory message"} defaultColor={"#37edb6"} setColor={setVictoryColor}/>
-        <div className="title">wordle</div>
+        {correctColor !== '' && (<ColorPickerButton text={"correct tile"} defaultColor={correctColor} setColor={handleCorrectColorChange}/>)}
+        {wrongColor !== '' && (<ColorPickerButton text={"wrong place tile"} defaultColor={wrongColor} setColor={handleWrongColorChange}/>)}
+        {victoryColor !== '' && (<ColorPickerButton text={"victory message"} defaultColor={victoryColor} setColor={handleVictoryColorChange}/>)}
+        <Link to="/landing" className="no-underline" state={{playerName: playerName}}><div className="title">wordle</div></Link>
       </div>
       <div className="line-sep"></div>
       <div className="guesses">
@@ -221,6 +380,13 @@ function Wordle() {
         setFlipAnimationClass={setFlipAnimationClass}
         showPopup={showPopup}
         setShowPopup={setShowPopup}
+        wordleDate={wordleDate}
+        playerName={playerName}
+        wordleId={wordleId}
+        isCorrect={isCorrect}
+        otherCorrect={otherCorrect}
+        otherGuessNumber={otherGuessNumber}
+        handleRefreshGuesses={handleRefreshGuesses}
       />
     </>
   )

@@ -76,11 +76,11 @@ h1 {
   border: 2px solid white;
   width: 80vw;
   margin-top: 5px;
-  margin-left: 5%;
-  height: 85px;
+  margin-left: 10%;
+  height: 65px;
   font-size: 3em;
   color: white;
-  background: linear-gradient(to right, green, lightgreen);
+  background: linear-gradient(to right, rgb(0, 83, 0), rgb(40, 148, 40));
   border-radius: 5px;
   overflow: hidden;
   opacity: 0;
@@ -103,12 +103,12 @@ h1 {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(to right, transparent, rgba(40, 148, 40, 0.2), transparent);
   animation: shineAnimation 7s linear infinite;
 }
 
 .WLT {
-  font-size: 40px;
+  font-size: 30px;
   width: calc(100vw - 20px);
   margin: auto;
   padding: 10px;
@@ -128,30 +128,32 @@ h1 {
 .first-dot {
   font-size: "75px";
   margin-top: "-7vh";
-  color: "rgb(58, 58, 58)";
+  color: rgb(156, 156, 156);
   animation: fadeIn 2s ease-in-out forwards 3.1s, growShrink 1s ease-in-out infinite 3.4s;
 }
 
 .sec-dot {
   font-size: "55px";
   margin-top: "-7vh";
-  color: "rgb(73, 73, 73)";
+  color: rgb(172, 172, 172);
   animation: fadeIn 2s ease-in-out forwards 3.2s, growShrink 1s ease-in-out infinite 3.7s;
 }
 
 .third-dot {
   font-size: "35px";
   margin-top: "-4vh";
-  color: "rgb(139, 139, 139)";
+  color: rgb(230, 230, 230);
   animation: fadeIn 2s ease-in-out forwards 3.3s, growShrink 1s ease-in-out infinite 4.0s;
 }
 
 .separator {
-  border-top: 4px solid rgb(99, 99, 99);
-  border-bottom: 4px solid rgb(99, 99, 99);
-  background: linear-gradient(to bottom, rgb(165, 165, 165), rgb(230, 230, 230));
+  position: fixed;
+  /* bottom: 135px; */
+  top: 75vh;
+  right: 0;
+  /* background: linear-gradient(to bottom, rgb(165, 165, 165), rgb(230, 230, 230)); */
   width: 100vw;
-  height: 9vh;
+  height: 7vh;
   margin-left: -16px;
   opacity: 0;
   animation: fadeIn 2s ease-in-out forwards 3.1s, slideUp 1s ease-in-out forwards 3.1s;
@@ -160,6 +162,11 @@ h1 {
 .full-page {
   transform: translateY(0);
   transition: transform 1.5s;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: fixed;
+  left: 0;
 }
 
 .first-page {
@@ -167,11 +174,17 @@ h1 {
 }
 
 .sec-page {
-  transform: translateY(-76vh);
+  transform: translateY(-76.7vh);
+  height: 180vh;
+}
+
+.third-page {
+  transform: translateY(-156.5vh);
+  height: 300vh;
 }
 
 .separator:active {
-  background: linear-gradient(to bottom, rgb(165, 165, 165), rgb(255, 255, 255));
+  background: linear-gradient(to bottom, rgb(34, 34, 34), rgb(36, 36, 36));
 }
 
 span {
@@ -220,4 +233,176 @@ span:nth-child(6) {
   animation-direction: ease-in-out;
   animation-fill-mode: forwards;
   animation-delay: 1.2s, 2.0s;
+}
+
+.more-stats {
+  position: fixed;
+  top: 82vh;
+  height: 100vh;
+  width: 100vw;
+  padding-left: 15px;
+}
+
+.more-stats-streak {
+  position: relative;
+  margin-top: 90%;
+  margin-left: -50%;
+}
+
+.more-stats-start {
+  position: relative;
+  margin-top: 5%;
+  margin-left: -50%;
+}
+
+.more-stats-solve {
+  position: relative;
+  margin-top: 10%;
+  margin-left: -50%;
+  height: 100vh;
+}
+
+.streak-label {
+  font-size: 45px;
+  max-width: 700px;
+  min-width: 10px;
+  height: auto;
+  overflow: hidden;
+  left: 10vw;
+}
+
+.start-label {
+  font-size: 35px;
+  max-width: 250px;
+  min-width: 10px;
+  height: auto;
+  overflow: hidden;
+  margin-left: 37%;
+  text-align: left;
+}
+
+.solve-label {
+  font-size: 35px;
+  max-width: 500px;
+  height: auto;
+  overflow: hidden;
+  margin-left: 35%;
+  text-align: center;
+}
+
+.max-streak {
+  color: gray;
+  position: fixed;
+  margin-left: 55vw;
+}
+
+.avg-guess {
+  position: fixed;
+  color: gray;
+  margin-left: 55vw;
+}
+
+.solve-score {
+  color: gray;
+  position: fixed;
+  margin-left: 80vw;
+}
+
+.streak-value {
+  margin-top: -15%;
+  margin-left: 50%;
+  font-size: 75px;
+  color: rgb(138, 62, 62);
+}
+
+.word-value {
+  margin-top: -15%;
+  margin-left: 67%;
+  font-size: 50px;
+  color: rgb(114, 62, 138);
+}
+
+.solve-shower {
+  margin-top: 5%;
+  margin-left: 35%;
+  font-size: 75px;
+  color: rgb(138, 62, 62);
+}
+
+.scroll-down-more-stats {
+  position: relative;
+  bottom: -70px; 
+  right: 0;
+  width: 100vw;
+  height: 7vh;
+}
+
+.arrow-down {
+  transform: rotate(90deg);
+  color: lightgray;
+  transition: transform 1.0s;
+}
+
+.arrow-up {
+  transform: rotate(-90deg);
+  color: lightgray;
+  transition: transform 1.0s;
+}
+
+.arrow-to-solve {
+  transform: rotate(90deg);
+  color: gray;
+}
+
+.decoration {
+  margin-top: -10%;
+  color: gray;
+}
+
+.how-many {
+  font-size: 20px;
+}
+
+.first-word {
+  color: rgb(124, 124, 175);
+}
+
+.second-word {
+  color: green;
+}
+
+.in-last {
+  position: fixed;
+  left: 0;
+  margin-top: 10%;
+  font-size: 30px;
+  width: 100vw;
+  text-align: center;
+}
+
+.in-last-input {
+  position: relative;
+  font-size: 15px;
+  color: black;
+  background-color: gray;
+  margin-left: 5px;
+  height: 30px;
+}
+
+.record-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 65vw;
+  margin-left: 46%;
+  margin-top: 12vh;
+  font-size: 40px;
+}
+
+.record {
+  display: flex;
+  justify-content: space-between;
+  width: 65vw;
+  margin-left: 46%;
+  margin-top: 2vh;
+  font-size: 40px;
 }

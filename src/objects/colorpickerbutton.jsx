@@ -36,7 +36,6 @@ const ColorPickerButton = ({text, defaultColor, setColor}) => {
   const handleClickOutside = (event) => {
     try {
       if (!colorPickerRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
-        console.log("running");
         setShowColorPicker(false);
       }
     } catch {
@@ -56,6 +55,7 @@ const ColorPickerButton = ({text, defaultColor, setColor}) => {
       <div ref={buttonRef} className="tile" onClick={handleButtonClick} style={{ backgroundColor: selectedColor, color: fontColor }}>
         {text}
       </div>
+      {console.log(selectedColor)}
       {showColorPicker && (
         <div ref={colorPickerRef} style={{ position: 'absolute', zIndex: 2 }}>
           <HexColorPicker color={selectedColor} onChange={handleColorChange} />

@@ -123,3 +123,69 @@ text {
   padding: 10px;
   animation: fadeIn 2s ease-in-out forwards 2.0s;
 }
+
+.password-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); /* Semi-transparent black overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: reveal 0.5s linear forwards 0.1s;
+  z-index: 2;
+}
+
+.password-content {
+  width: 325px;
+  height: 200px;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: rgb(44, 44, 44);
+  color: white;
+  z-index: 3; /* Ensure popup is above overlay */
+}
+
+.incorrect-content {
+  width: 325px;
+  height: 100px;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: rgb(44, 44, 44);
+  color: white;
+  z-index: 4; /* Ensure popup is above overlay */
+}
+
+input[type=password] {
+  height: 35px;
+  width: 98%;
+  padding: 10px;
+  margin: auto;
+  font-size: 25px;
+}
+
+.enter {
+  font-size: 25px !important;
+}
+
+.enter:active, .close-pass:active {
+  background-color: darkgray;
+}
+
+.close-pass {
+  font-size: 25px !important;
+}
+
+label {
+  font-size: 25px;
+}
+
+.no-underline {
+  text-decoration: none;
+  color: inherit;
+}

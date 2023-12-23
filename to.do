@@ -1,0 +1,3 @@
+- make SQL database
+- finish routers to each page
+- finish stat display
