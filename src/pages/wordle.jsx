@@ -292,6 +292,22 @@ function Wordle() {
     await fetch(ip + `/api/update/players/victory_message_color/${encodeURIComponent(color)}/player_name/${playerName}`, {method: 'POST'})
   }
 
+  const handleShareClick = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Share via',
+          text: 'Check out this message!',
+        });
+      } else {
+        throw new Error('Web Share API not supported');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Handle the error or provide a fallback option
+    }
+  };
+
   return (
     <>
       {showPopup && (
@@ -337,7 +353,7 @@ function Wordle() {
               </div>
             </div>
             <div className="btns">
-              <div className="share btn" onClick={() => setShowPopup(false)}>SHARE</div>
+              <div className="share btn" onClick={handleShareClick}>SHARE</div>
               <div className="close btn" onClick={() => setShowPopup(false)}>CLOSE</div>
             </div>
           </div>
