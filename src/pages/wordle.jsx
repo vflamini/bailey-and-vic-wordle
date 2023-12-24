@@ -165,6 +165,9 @@ function Wordle() {
     if (wDate) {
       wordleDate = wDate;
     }
+    if (pName) {
+      playerName = pName;
+    }
   }, []);
 
   useEffect(() => {
