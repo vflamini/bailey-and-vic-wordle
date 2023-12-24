@@ -4,7 +4,7 @@ import { MdOutlineBackspace } from "react-icons/md";
 import { ip } from '../config/ip';
 import '../css/keyboard.css';
 
-const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, correctLetters, wrongPlaceLetters, wrongLetters, correctColor, wrongColor, flipAnimationClass, setFlipAnimationClass, showPopup, setShowPopup, wordleDate, playerName, wordleId, isCorrect, otherCorrect, otherGuessNumber, handleRefreshGuesses}) => {
+const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, correctLetters, wrongPlaceLetters, wrongLetters, correctColor, wrongColor, flipAnimationClass, setFlipAnimationClass, showPopup, setShowPopup, wordleDate, playerName, wordleId, isCorrect, otherCorrect, otherGuessNumber, handleRefreshGuesses, shareGuesses}) => {
   const firstRowKeys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
   const secRowKeys = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
   const thirdRowKeys = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DELETE'];

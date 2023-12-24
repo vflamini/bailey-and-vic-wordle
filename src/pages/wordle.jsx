@@ -49,6 +49,15 @@ function Wordle() {
   let wrongPlaceLetters = [];
   let wrongLetters = [];
 
+  const shareGuesses = [
+    ['','','','',''],
+    ['','','','',''],
+    ['','','','',''],
+    ['','','','',''],
+    ['','','','',''],
+    ['','','','','']
+  ];
+
   // Get today's date
   const today = new Date();
 
@@ -65,7 +74,6 @@ function Wordle() {
       .then(res => res.json())
       .then(data => {
         const player_entry = data[0];
-        console.log(player_entry.correct_tile_color);
         setCorrectColor(player_entry.correct_tile_color !== null ? player_entry.correct_tile_color : '#0c6b11');
         setWrongColor(player_entry.wrong_place_tile_color !== null ? player_entry.wrong_place_tile_color : '#61690f');
         setVictoryColor(player_entry.victory_message_color !== null ? player_entry.victory_message_color : '#37edb6');
@@ -84,7 +92,6 @@ function Wordle() {
     await fetch(ip + `/api/getguesses/${wordleId}/${otherPlayerName}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         data.forEach(guess => {
           if (guess.is_correct) {
             setOtherCorrect(true);
@@ -100,11 +107,9 @@ function Wordle() {
   }
 
   const getGuesses = async () => {
-    console.log(ip + `/api/getguesses/${wordleId}/${playerName}`);
     await fetch(ip + `/api/getguesses/${wordleId}/${playerName}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         data.forEach(guess => {
           if (guess.is_correct) {
             setCorrect(true);
@@ -127,7 +132,6 @@ function Wordle() {
     await fetch(ip + `/api/getguesses/${wordleId}/${otherPlayerName}`)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         data.forEach(guess => {
           if (guess.is_correct) {
             setOtherCorrect(true);
@@ -211,9 +215,9 @@ function Wordle() {
       if (letter !== '' && guessNum + 1 < guessNumber) {
         if (corrWord[idx] === letter) {
           lCorrectLetters.push(letter);
-          console.log(lCorrectLetters);
           lettersLeft[idx] = '-';
           tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} correct-${idx + 1}`} style={{transition: `background-color 0.2s linear ${idx * 0.45}s`, backgroundColor: correctColor}}>{letter}</div>
+          shareGuesses[guessNum][idx] = '🟩';
           // if (!returnWrongTile) {
           //   break;
           // }
@@ -224,12 +228,16 @@ function Wordle() {
               if (tiles[idx] === '') {
                 if (lettersLeft.includes(letter)) {
                   tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-place-${idx + 1}`} style={{transition: `background-color 0.2s linear ${idx * 0.45}s`, backgroundColor: wrongColor}}>{letter}</div>
+                  shareGuesses[guessNum][idx] = '🟨';
                   let removeIdx = lettersLeft.findIndex((removedLetter) => removedLetter === letter);
                   lettersLeft[removeIdx] = '-';
                   lWrongPlaceLetters.push(letter);
                 } else {
                   lWrongLetters.push(letter)
                   tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-${idx + 1}`}>{letter}</div>;
+                  if (letter && letter !== '') {
+                    shareGuesses[guessNum][idx] = '⬜';
+                  }
                 }
               }
               continue;
@@ -240,17 +248,25 @@ function Wordle() {
             lettersLeft[removeIdx] = '-';
             lWrongPlaceLetters.push(letter);
             tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-place-${idx + 1}`} style={{transition: `background-color 0.2s linear ${idx * 0.45}s`, backgroundColor: wrongColor}}>{letter}</div>
+            shareGuesses[guessNum][idx] = '🟨';
           }
         } else {
           if (returnWrongTile) {
             lWrongLetters.push(letter);
             tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-${idx + 1}`}>{letter}</div>
+            if (letter && letter !== '') {
+              shareGuesses[guessNum][idx] = '⬜';
+            }
           }
         }
       } else {
         if (returnWrongTile) {
           lWrongLetters.push(letter);
           tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-${idx + 1}`}>{letter}</div>
+          if (letter && letter !== '') {
+            console.log(letter);
+            shareGuesses[guessNum][idx] = '⬜';
+          }
         }
       }
     }
@@ -294,10 +310,14 @@ function Wordle() {
 
   const handleShareClick = async () => {
     try {
+      console.log(shareGuesses);
+      const formattedString = `Wordle ${wordleId} ${guessNumber - 1}/6\n` + shareGuesses
+        .map((list) => list.filter((item) => item !== '').join(''))
+        .join("\n")
       if (navigator.share) {
         await navigator.share({
           title: 'Share via',
-          text: '🟥',
+          text: formattedString,
         });
       } else {
         throw new Error('Web Share API not supported');
@@ -403,6 +423,7 @@ function Wordle() {
         otherCorrect={otherCorrect}
         otherGuessNumber={otherGuessNumber}
         handleRefreshGuesses={handleRefreshGuesses}
+        shareGuesses={shareGuesses}
       />
     </>
   )
