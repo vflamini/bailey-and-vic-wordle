@@ -11,7 +11,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 
 function Wordle() {
   const location = useLocation();
-  const {wordleDate, playerName} = location.state || {};
+  let {wordleDate, playerName} = location.state || {};
   const [guesses, setGuess] = useState(
     [
       ['','','','',''],
@@ -149,6 +149,23 @@ function Wordle() {
   const handleRefreshGuesses = async () => {
     await getOtherGuesses();
   }
+
+  useEffect(() => {
+    if (playerName && playerName != '') {
+      sessionStorage.setItem('playerName', playerName);
+    }
+    if (wordleDate && wordleDate != '') {
+      sessionStorage.setItem('wordleDate', wordleDate);
+    }
+  }, [playerName, wordleDate]);
+
+  useEffect(() => {
+    const pName = sessionStorage.getItem('playerName');
+    const wDate = sessionStorage.getItem('wordleDate');
+    if (wDate) {
+      wordleDate = wDate;
+    }
+  }, []);
 
   useEffect(() => {
     const wordleStored = async () => {
