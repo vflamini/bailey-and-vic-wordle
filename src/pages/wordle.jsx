@@ -217,7 +217,7 @@ function Wordle() {
       getWordleWordExternal();
     }
     getPlayerInfo();
-  }, [wordleId, playerName]);
+  }, [wordleId, playerName, wordleDate]);
 
   const findTilePlacement = (guess, guessNum, returnWrongTile, corrWord, tiles = ['','','','','']) => {
     let additor = 5 - guess.length;
