@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Routes,
   RouterProvider,
   Outlet
 } from "react-router-dom";
@@ -13,7 +14,7 @@ import Landing from './pages/landing.jsx';
 import Wordle from './pages/wordle.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>

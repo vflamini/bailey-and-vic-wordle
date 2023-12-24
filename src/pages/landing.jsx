@@ -109,11 +109,22 @@ function Landing() {
   }
 
   useEffect(() => {
+    sessionStorage.setItem('playerName', playerName);
+  }, [playerName]);
+
+  useEffect(() => {
+    const pName = sessionStorage.getItem('playerName');
+    if (pName) {
+      playerName = pName;
+    }
+  }, []);
+
+  useEffect(() => {
     // Add the animation class after the component mounts
     setWordleAnimationClass('wordleFadeInAnimation');
     getPlayerInfo();
     getBestStartingWord();
-    
+    sessionStorage.setItem('playerName', playerName);
   }, [bestStart]); // Empty dependency array means this effect runs once after the initial render
 
   const handlePageSlide = () => {
