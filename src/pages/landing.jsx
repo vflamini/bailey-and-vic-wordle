@@ -27,13 +27,13 @@ function Landing() {
   const [bestSolveStart, setBestSolveStart] = useState("N/A");
   const [bestSolveSol, setBestSolveSol] = useState("N/A");
   const [bestSolveNum, setBestSolveNum] = useState(0);
+  const [playerName, setPlayerName] = useState('');
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
   const current_day = currentDate.getDate();
   const [selectedDate, setSelectedDate] = useState(year + "-" + month.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0'));
   const location = useLocation();
-  let {playerName} = location.state || {};
 
   const getPlayerInfo = async () => {
     await fetch(ip + `/api/get/players/player_name/${playerName}`)
@@ -109,6 +109,11 @@ function Landing() {
   }
 
   useEffect(() => {
+    const {playerName: initialPlayerName} = location.state || {};
+    setPlayerName(initialPlayerName || '');
+  }, [location.state]);
+
+  useEffect(() => {
     console.log('storing player name');
     if (playerName && playerName != '') {
       sessionStorage.setItem('playerName', playerName);
@@ -118,7 +123,7 @@ function Landing() {
   useEffect(() => {
     const pName = sessionStorage.getItem('playerName');
     if (pName) {
-      playerName = pName;
+      setPlayerName(pName);
     }
   }, []);
 
