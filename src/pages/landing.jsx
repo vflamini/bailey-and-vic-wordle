@@ -110,7 +110,9 @@ function Landing() {
 
   useEffect(() => {
     console.log('storing player name');
-    sessionStorage.setItem('playerName', playerName);
+    if (playerName && playerName != '') {
+      sessionStorage.setItem('playerName', playerName);
+    }
   }, [playerName]);
 
   useEffect(() => {
