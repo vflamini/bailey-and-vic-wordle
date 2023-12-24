@@ -56,7 +56,6 @@ function Login() {
     try {
       const response = await fetch(ip + `/api/login/${passValue}/${selectedPlayer}`);
       const data = await response.json();
-      console.log(data);
       if (data.authenticated) {
         navigate('/landing', {state: {playerName: selectedPlayer}})
       } else {
