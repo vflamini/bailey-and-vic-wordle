@@ -311,9 +311,11 @@ function Wordle() {
   const handleShareClick = async () => {
     try {
       console.log(shareGuesses);
-      const formattedString = `Wordle ${wordleId} ${guessNumber - 1}/6\n` + shareGuesses
+      const formattedString = `Wordle ${wordleId} ${guessNumber - 1}/6\n\n` + shareGuesses
         .map((list) => list.filter((item) => item !== '').join(''))
         .join("\n")
+        .trim();
+      console.log(formattedString);
       if (navigator.share) {
         await navigator.share({
           title: 'Share via',
