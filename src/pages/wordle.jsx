@@ -11,7 +11,6 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 
 function Wordle() {
   const location = useLocation();
-  let {wordleDate, playerName} = location.state || {};
   const [guesses, setGuess] = useState(
     [
       ['','','','',''],
@@ -45,6 +44,8 @@ function Wordle() {
   const [sepClass, setSepClass] = useState('full-page first-page');
   const [correctWord, setCorrectWord] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [wordleDate, setWordleDate] = useState('');
+  const [playerName, setPlayerName] = useState('');
   let correctLetters = [];
   let wrongPlaceLetters = [];
   let wrongLetters = [];
@@ -151,6 +152,15 @@ function Wordle() {
   }
 
   useEffect(() => {
+    // Destructure wordleDate and playerName from location.state with default values of an empty object
+    const { wordleDate: initialWordleDate, playerName: initialPlayerName } = location.state || {};
+
+    // Set the initial values for wordleDate and playerName in the component state
+    setWordleDate(initialWordleDate || '');
+    setPlayerName(initialPlayerName || '');
+  }, [location.state]);
+
+  useEffect(() => {
     if (playerName && playerName != '') {
       sessionStorage.setItem('playerName', playerName);
     }
@@ -163,10 +173,10 @@ function Wordle() {
     const pName = sessionStorage.getItem('playerName');
     const wDate = sessionStorage.getItem('wordleDate');
     if (wDate) {
-      wordleDate = wDate;
+      setWordleDate(wDate);
     }
     if (pName) {
-      playerName = pName;
+      setPlayerName(pName);
     }
   }, []);
 
