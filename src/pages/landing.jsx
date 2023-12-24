@@ -124,8 +124,7 @@ function Landing() {
     setWordleAnimationClass('wordleFadeInAnimation');
     getPlayerInfo();
     getBestStartingWord();
-    sessionStorage.setItem('playerName', playerName);
-  }, [bestStart]); // Empty dependency array means this effect runs once after the initial render
+  }, [bestStart, playerName]); // Empty dependency array means this effect runs once after the initial render
 
   const handlePageSlide = () => {
     if (sepClass.includes("first-page")) {
