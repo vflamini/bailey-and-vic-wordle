@@ -33,7 +33,7 @@ function Landing() {
   const current_day = currentDate.getDate();
   const [selectedDate, setSelectedDate] = useState(year + "-" + month.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0'));
   const location = useLocation();
-  const {playerName} = location.state || {};
+  let {playerName} = location.state || {};
 
   const getPlayerInfo = async () => {
     await fetch(ip + `/api/get/players/player_name/${playerName}`)
