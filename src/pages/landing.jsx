@@ -109,6 +109,7 @@ function Landing() {
   }
 
   useEffect(() => {
+    console.log('storing player name');
     sessionStorage.setItem('playerName', playerName);
   }, [playerName]);
 
