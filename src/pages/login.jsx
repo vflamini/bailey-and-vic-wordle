@@ -22,7 +22,6 @@ function Login() {
     try {
       const response = await fetch(ip + `/api/get/players/player_name/${playerName}`);
       const data = await response.json();
-      console.log(data);
       return data[0].password !== null && data[0].password !== "";
     } catch {
       return false;
@@ -43,7 +42,6 @@ function Login() {
     try {
       const response = await fetch(ip + `/api/password/${passValue}/${selectedPlayer}`, {method: 'POST'});
       const data = await response.json();
-      console.log(data);
       setCreatePasswordEnter(false);
       return true;
     } catch (error) {

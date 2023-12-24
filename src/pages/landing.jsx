@@ -126,6 +126,7 @@ function Landing() {
     // Add the animation class after the component mounts
     setWordleAnimationClass('wordleFadeInAnimation');
     getPlayerInfo();
+    getBestStartingWord();
   }, [playerName]); // Empty dependency array means this effect runs once after the initial render
 
   useEffect(() => {
