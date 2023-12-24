@@ -297,7 +297,7 @@ function Wordle() {
       if (navigator.share) {
         await navigator.share({
           title: 'Share via',
-          text: 'Check out this message!',
+          text: '🟥',
         });
       } else {
         throw new Error('Web Share API not supported');
