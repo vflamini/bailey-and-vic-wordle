@@ -17,6 +17,7 @@ function Calendar({setSelectedDate}) {
   const handleBoxClick = (boxIndex) => {
     setSelectedBox(boxIndex >= current_day && selectedMonth === month ? current_day : boxIndex);
     setSelectedDate(boxIndex >= current_day && selectedMonth === month ? selectedYear + "-" + selectedMonth.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0') : selectedYear + "-" + selectedMonth.toString().padStart(2, '0') + "-" + boxIndex.toString().padStart(2, '0'))
+    sessionStorage.setItem('wordleDate', boxIndex >= current_day && selectedMonth === month ? selectedYear + "-" + selectedMonth.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0') : selectedYear + "-" + selectedMonth.toString().padStart(2, '0') + "-" + boxIndex.toString().padStart(2, '0'));
   };
 
   const handleMonthChange = (direction) => {

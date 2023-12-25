@@ -118,7 +118,10 @@ function Landing() {
     if (playerName && playerName != '') {
       sessionStorage.setItem('playerName', playerName);
     }
-  }, [playerName]);
+    if (selectedDate && selectedDate != '') {
+      sessionStorage.setItem('wordleDate', selectedDate);
+    }
+  }, [playerName, selectedDate]);
 
   useEffect(() => {
     const pName = sessionStorage.getItem('playerName');
