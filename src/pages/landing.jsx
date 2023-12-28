@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Calendar from '../objects/calendar.jsx';
 import { ip } from '../config/ip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,6 +34,7 @@ function Landing() {
   const current_day = currentDate.getDate();
   const [selectedDate, setSelectedDate] = useState(year + "-" + month.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0'));
   const location = useLocation();
+  const navigate = useNavigate();
 
   const getPlayerInfo = async () => {
     await fetch(ip + `/api/get/players/player_name/${playerName}`)
@@ -129,6 +130,10 @@ function Landing() {
       setPlayerName(pName);
     }
   }, []);
+
+  if (playerName === '') {
+    navigate('/');
+  }
 
   useEffect(() => {
     // Add the animation class after the component mounts

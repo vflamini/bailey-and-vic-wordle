@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ip } from '../config/ip';
 import Keyboard from '../objects/keyboard.jsx';
 import ColorPickerButton from '../objects/colorpickerbutton.jsx';
@@ -11,6 +11,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 
 function Wordle() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [guesses, setGuess] = useState(
     [
       ['','','','',''],
@@ -46,6 +47,7 @@ function Wordle() {
   const [showPopup, setShowPopup] = useState(false);
   const [wordleDate, setWordleDate] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [wordList, setWordList] = useState([]);
   let correctLetters = [];
   let wrongPlaceLetters = [];
   let wrongLetters = [];
@@ -231,6 +233,24 @@ function Wordle() {
     }
     getPlayerInfo();
   }, [wordleId, playerName, wordleDate]);
+
+  if (playerName === '') {
+    navigate('/');
+  }
+
+  useEffect(() => {
+    const fetchWordList = async() => {
+      try {
+        const response = await fetch('/src/assets/validwords.txt');
+        const content = await response.text();
+        const words = content.split('\n').map(word => word.trim().toUpperCase());
+        setWordList(words);
+      } catch (error) {
+        console.error('Error fetching word list:', error);
+      }
+    };
+    fetchWordList();
+  }, []);
 
   const findTilePlacement = (guess, guessNum, returnWrongTile, corrWord, tiles = ['','','','','']) => {
     let additor = 5 - guess.length;
@@ -456,6 +476,7 @@ function Wordle() {
         otherGuessNumber={otherGuessNumber}
         handleRefreshGuesses={handleRefreshGuesses}
         shareGuesses={shareGuesses}
+        wordList={wordList}
       />
     </>
   )

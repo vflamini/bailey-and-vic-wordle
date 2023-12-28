@@ -4,11 +4,17 @@ import { MdOutlineBackspace } from "react-icons/md";
 import { ip } from '../config/ip';
 import '../css/keyboard.css';
 
-const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, correctLetters, wrongPlaceLetters, wrongLetters, correctColor, wrongColor, flipAnimationClass, setFlipAnimationClass, showPopup, setShowPopup, wordleDate, playerName, wordleId, isCorrect, otherCorrect, otherGuessNumber, handleRefreshGuesses, shareGuesses}) => {
+const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, correctLetters, wrongPlaceLetters, wrongLetters, correctColor, wrongColor, flipAnimationClass, setFlipAnimationClass, showPopup, setShowPopup, wordleDate, playerName, wordleId, isCorrect, otherCorrect, otherGuessNumber, handleRefreshGuesses, shareGuesses, wordList}) => {
   const firstRowKeys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
   const secRowKeys = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
   const thirdRowKeys = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DELETE'];
   const validWord = true;
+  const [isInWordList, setIsWordInList] = useState(false);
+  const [inputWord, setInputWord] = useState('');
+
+  const isValidWord = (word) => {
+    return(wordList.includes(word));
+  }
 
   const handleKeyPress = (key) => {
     if (!isCorrect && guessNumber <= 6) {
@@ -71,7 +77,7 @@ const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, 
     let current_letter = current_guesses.findIndex((letter) => letter === '');
     let anClass = [...flipAnimationClass];
     if (current_letter < 0) {
-      if (validWord) {
+      if (isValidWord(current_guesses.join(''))) {
         anClass[guessNumber - 1] = "letter-guess flip-card-inner flip-card-flipper";
         setFlipAnimationClass(anClass);
         setGuessNumber(guessNumber + 1);
