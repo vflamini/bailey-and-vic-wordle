@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ip } from '../config/ip';
+import sum from '../functions/arraySum';
 import Keyboard from '../objects/keyboard.jsx';
 import ColorPickerButton from '../objects/colorpickerbutton.jsx';
 import getFontColor from '../functions/getFontColor.js';
@@ -35,6 +36,7 @@ function Wordle() {
   const [wordleId, setWordleId] = useState(0);
   const [isCorrect, setCorrect] = useState(false);
   const [otherCorrect, setOtherCorrect] = useState(false);
+  const [guessDist, setGuessDist] = useState([0,0,0,0,0,0]);
   const [guessNumber, setGuessNumber] = useState(1);
   const [otherGuessNumber, setOtherGuessNumber] = useState(null);
   const [correctColor, setCorrectColor] = useState('');
@@ -48,6 +50,9 @@ function Wordle() {
   const [wordleDate, setWordleDate] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [wordList, setWordList] = useState([]);
+  const [fails, setFails] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+  const [currStreak, setCurrStreak] = useState(0);
   let correctLetters = [];
   let wrongPlaceLetters = [];
   let wrongLetters = [];
@@ -80,6 +85,10 @@ function Wordle() {
         setCorrectColor(player_entry.correct_tile_color !== null ? player_entry.correct_tile_color : '#0c6b11');
         setWrongColor(player_entry.wrong_place_tile_color !== null ? player_entry.wrong_place_tile_color : '#61690f');
         setVictoryColor(player_entry.victory_message_color !== null ? player_entry.victory_message_color : '#37edb6');
+        setGuessDist([player_entry['1_guesses'], player_entry['2_guesses'], player_entry['3_guesses'], player_entry['4_guesses'], player_entry['5_guesses'], player_entry['6_guesses']])
+        setFails(player_entry.failures !== null ? player_entry.failures : 0);
+        setMaxStreak(player_entry.max_streak !== null ? player_entry.max_streak : 0)
+        setCurrStreak(player_entry.current_streak !== null ? player_entry.current_streak : 0)
         getGuesses();
       })
       .catch(err => console.log(err))
@@ -114,7 +123,7 @@ function Wordle() {
       .then(res => res.json())
       .then(data => {
         data.forEach(guess => {
-          if (guess.is_correct) {
+          if (guess.is_correct || guess.guess_number === 6) {
             setCorrect(true);
             setShowPopup(true);
           }
@@ -388,39 +397,39 @@ function Wordle() {
             <div className="statistics">
               STATISTICS
               <div className="stats">
-                <div className="played-num">62</div>
-                <div className="win-perc-num">100</div>
-                <div className="curr-strk-num">2</div>
-                <div className="max-strk-num">11</div>
+                <div className="played-num">{sum(guessDist) + fails}</div>
+                <div className="win-perc-num">{Math.trunc((sum(guessDist)/(sum(guessDist) + fails)) * 100)}</div>
+                <div className="curr-strk-num">{currStreak}</div>
+                <div className="max-strk-num">{maxStreak}</div>
               </div>
               <div className="stat-names">
                 <div className="played name">Played</div>
-                <div className="win-perc name">Win %</div>
+                <div className="win-perc name">Solve %</div>
                 <div className="curr-strk name">Current Streak</div>
                 <div className="max-strk name">Max Streak</div>
               </div>
             </div>
             <div className="guess-dist">
-              <div style={{width: "80vw", textAlign: "center", color: "red", fontSize: "20px"}}>SOLVE SCORE: 106789</div> <br></br>
+              <div style={{width: "80vw", textAlign: "center", color: "red", fontSize: "20px"}}>SOLVE SCORE: 106789</div><br></br>
               GUESS DISTRIBUTION <br></br><br></br>
               <div className="all-guesses">
                 <div className="bar">
-                  <div className="outer-num">1</div><div className="one guesses-num">0</div>
+                  <div className="outer-num">1</div><div className="one guesses-num" style={{width: `calc((${guessDist[0]}/${sum(guessDist)})*300px + 20px)`}}>{guessDist[0]}</div>
                 </div>
                 <div className="bar">
-                  <div className="outer-num">2</div><div className="one guesses-num">0</div>
+                  <div className="outer-num">2</div><div className="one guesses-num" style={{width: `calc((${guessDist[1]}/${sum(guessDist)})*300px + 20px)`}}>{guessDist[1]}</div>
                 </div>
                 <div className="bar">
-                  <div className="outer-num">3</div><div className="one guesses-num">0</div>
+                  <div className="outer-num">3</div><div className="one guesses-num" style={{width: `calc((${guessDist[2]}/${sum(guessDist)})*300px + 20px)`}}>{guessDist[2]}</div>
                 </div>
                 <div className="bar">
-                  <div className="outer-num">4</div><div className="one guesses-num">0</div>
+                  <div className="outer-num">4</div><div className="one guesses-num" style={{width: `calc((${guessDist[3]}/${sum(guessDist)})*300px + 20px)`}}>{guessDist[3]}</div>
                 </div>
                 <div className="bar">
-                  <div className="outer-num">5</div><div className="one guesses-num">0</div>
+                  <div className="outer-num">5</div><div className="one guesses-num" style={{width: `calc((${guessDist[4]}/${sum(guessDist)})*300px + 20px)`}}>{guessDist[4]}</div>
                 </div>
                 <div className="bar">
-                  <div className="outer-num">6</div><div className="one guesses-num">0</div>
+                  <div className="outer-num">6</div><div className="one guesses-num" style={{width: `calc((${guessDist[5]}/${sum(guessDist)})*300px + 20px)`}}>{guessDist[5]}</div>
                 </div>
               </div>
             </div>
@@ -477,6 +486,10 @@ function Wordle() {
         handleRefreshGuesses={handleRefreshGuesses}
         shareGuesses={shareGuesses}
         wordList={wordList}
+        maxStreak={maxStreak}
+        currStreak={currStreak}
+        setMaxStreak={setMaxStreak}
+        setCurrStreak={setCurrStreak}
       />
     </>
   )

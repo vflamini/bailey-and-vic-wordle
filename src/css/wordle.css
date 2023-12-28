@@ -164,19 +164,43 @@ html {
 .stats {
   position: relative;
   width: 90%;
-  margin-left: 5%;
+  margin-left: 5vw;
   display: flex;
-  justify-content: space-between;
   font-size: 34px;
 }
 
 .stat-names {
   position: relative;
   width: 90%;
-  margin-left: 5%;
+  margin-left: 5vw;
   display: flex;
   justify-content: space-between;
   font-size: 12px;
+}
+
+.played-num {
+  margin-left: -2%;
+  width: 50px;
+  text-align: center;
+}
+
+.win-perc-num {
+  margin-left: 12%;
+  width: 75px;
+  text-align: center;
+}
+
+.curr-strk-num {
+  margin-left: 5%;
+  width: 50px;
+  text-align: center;
+}
+
+.max-strk-num {
+  position: absolute;
+  margin-left: 84%;
+  width: 50px;
+  text-align: center;
 }
 
 .name {

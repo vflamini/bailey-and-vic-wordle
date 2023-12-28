@@ -4,7 +4,7 @@ import { MdOutlineBackspace } from "react-icons/md";
 import { ip } from '../config/ip';
 import '../css/keyboard.css';
 
-const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, correctLetters, wrongPlaceLetters, wrongLetters, correctColor, wrongColor, flipAnimationClass, setFlipAnimationClass, showPopup, setShowPopup, wordleDate, playerName, wordleId, isCorrect, otherCorrect, otherGuessNumber, handleRefreshGuesses, shareGuesses, wordList}) => {
+const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, correctLetters, wrongPlaceLetters, wrongLetters, correctColor, wrongColor, flipAnimationClass, setFlipAnimationClass, showPopup, setShowPopup, wordleDate, playerName, wordleId, isCorrect, otherCorrect, otherGuessNumber, handleRefreshGuesses, shareGuesses, wordList, maxStreak, currStreak, setMaxStreak, setCurrStreak}) => {
   const firstRowKeys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
   const secRowKeys = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
   const thirdRowKeys = ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DELETE'];
@@ -43,16 +43,18 @@ const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, 
   }
 
   const storeGuessAsCorrect = async () => {
-    await fetch(ip + `/api/update/guesses/is_correct/1/guess_id/${wordleDate.replaceAll('-','') + guessNumber + playerName}`, {method: 'POST'})
+    console.log(wordleDate.replaceAll('-','') + guessNumber + playerName);
+    let fetchRes = await fetch(ip + `/api/update/guesses/is_correct/1/guess_id/${wordleDate.replaceAll('-','') + guessNumber + playerName}`, {method: 'POST'})
+    let fetchData = await fetchRes.text();
+    console.log(fetchData);
     let otherPlayerName;
     if (playerName === "Vic") {
       otherPlayerName = "Bailey"
     } else {
       otherPlayerName = "Vic"
     }
+    await fetch(ip + `/api/increment/players/games_played/player_name/${playerName}`, {method: 'POST'})
     if (otherCorrect) {
-      console.log(guessNumber);
-      console.log(otherGuessNumber);
       if (guessNumber < otherGuessNumber) {
         await fetch(ip + `/api/increment/players/wins/player_name/${playerName}`, {method: 'POST'})
         await fetch(ip + `/api/increment/players/losses/player_name/${otherPlayerName}`, {method: 'POST'})
@@ -69,6 +71,38 @@ const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, 
     } else {
       await fetch(ip + `/api/increment/players/failures/player_name/${playerName}`, {method: 'POST'})
     }
+    let solvedRes = await fetch(ip + `/api/issolved/${parseInt(wordleId) - 1}/${playerName}`)
+    let isStreak = await solvedRes.json();
+    console.log(isStreak.isSolved);
+    if (isStreak.isSolved) {
+      await fetch(ip + `/api/update/players/current_streak/${currStreak + 1}/player_name/${playerName}`, {method: 'POST'})   
+      if (currStreak + 1 > maxStreak) {
+        await fetch(ip + `/api/update/players/max_streak/${currStreak + 1}/player_name/${playerName}`, {method: 'POST'});
+        setMaxStreak(currStreak + 1);
+      }
+      setCurrStreak(currStreak + 1);
+    } else {
+      await fetch(ip + `/api/update/players/current_streak/${1}/player_name/${playerName}`, {method: 'POST'})   
+      setCurrStreak(1);
+    }
+  }
+
+  const storeGuessAsFailure = async () => {
+    let otherPlayerName;
+    if (playerName === "Vic") {
+      otherPlayerName = "Bailey";
+    } else {
+      otherPlayerName = "Vic";
+    }
+    await fetch(ip + `/api/increment/players/games_played/player_name/${playerName}`, {method: 'POST'})
+    if (otherCorrect) {
+      await fetch(ip + `/api/increment/players/wins/player_name/${otherPlayerName}`, {method: 'POST'})
+      await fetch(ip + `/api/increment/players/losses/player_name/${playerName}`, {method: 'POST'})        
+    } else if(!otherCorrect && otherGuessNumber === 6) {
+      await fetch(ip + `/api/increment/players/ties/player_name/${otherPlayerName}`, {method: 'POST'})
+      await fetch(ip + `/api/increment/players/ties/player_name/${playerName}`, {method: 'POST'})   
+    }
+    await fetch(ip + `/api/increment/players/failures/player_name/${playerName}`, {method: 'POST'})
   }
 
   const handleSubmit = async () => {
@@ -81,14 +115,15 @@ const Keyboard = ({setGuess, guesses, guessNumber, setGuessNumber, correctWord, 
         anClass[guessNumber - 1] = "letter-guess flip-card-inner flip-card-flipper";
         setFlipAnimationClass(anClass);
         setGuessNumber(guessNumber + 1);
-        storeGuess(current_guesses.toString().replaceAll(',',''))
-        console.log(current_guesses.toString().replaceAll(',',''));
+        storeGuess(current_guesses.toString().replaceAll(',',''));
+        console.log(guessNumber);
         if (current_guesses.toString().replaceAll(',','') === correctWord && guessNumber <= 6) {
           storeGuessAsCorrect();
           console.log("correct!!")
           setShowPopup(true);
-        } else if (guessNumber > 6) {
-          storeGuessAsCorrect();
+        } else if (guessNumber === 6) {
+          storeGuessAsFailure();
+          setShowPopup(true);
         }
       }
     }
