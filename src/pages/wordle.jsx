@@ -250,7 +250,7 @@ function Wordle() {
   useEffect(() => {
     const fetchWordList = async() => {
       try {
-        const response = await fetch('/src/assets/validwords.txt');
+        const response = await fetch('/validwords.txt');
         const content = await response.text();
         const words = content.split('\n').map(word => word.trim().toUpperCase());
         setWordList(words);
@@ -410,7 +410,7 @@ function Wordle() {
               </div>
             </div>
             <div className="guess-dist">
-              <div style={{width: "80vw", textAlign: "center", color: "red", fontSize: "20px"}}>SOLVE SCORE: 106789</div><br></br>
+              <div style={{width: "80vw", textAlign: "center", color: "red", fontSize: "20px"}}>SOLVE SCORE: N/A</div><br></br>
               GUESS DISTRIBUTION <br></br><br></br>
               <div className="all-guesses">
                 <div className="bar">

@@ -56,6 +56,7 @@ function Login() {
       const data = await response.json();
       if (data.authenticated) {
         navigate('/landing', {state: {playerName: selectedPlayer}})
+        sessionStorage.setItem('playerName', selectedPlayer);
       } else {
         setShowIncorrectPass(true);
       }

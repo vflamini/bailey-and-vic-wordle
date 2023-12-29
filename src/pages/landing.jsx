@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import '../css/landing.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import { BsRecord } from 'react-icons/bs';
 
 function Landing() {
   const [wordleAnimationClass, setWordleAnimationClass] = useState('');
@@ -28,10 +29,12 @@ function Landing() {
   const [bestSolveSol, setBestSolveSol] = useState("N/A");
   const [bestSolveNum, setBestSolveNum] = useState(0);
   const [playerName, setPlayerName] = useState('');
+  const [todayWordleId, setTodayWordleId] = useState(0);
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
   const current_day = currentDate.getDate();
+  const fullTodaysDate = year + "-" + month.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0');
   const [selectedDate, setSelectedDate] = useState(year + "-" + month.toString().padStart(2, '0') + "-" + current_day.toString().padStart(2, '0'));
   const location = useLocation();
   const navigate = useNavigate();
@@ -147,6 +150,19 @@ function Landing() {
     getBestStartingWord();
   }, [bestStart, playerName]); // Empty dependency array means this effect runs once after the initial render
 
+  useEffect(() => {
+    const getTodayWordleId = async () => {
+      try {
+        const res = await fetch(ip + `/api/get/wordle/wordle_date/${encodeURIComponent(fullTodaysDate)}`);
+        const data = await res.json();
+        setTodayWordleId(data[0].wordle_id);
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getTodayWordleId();
+  }, []); // Empty dependency array means this effect runs once after the initial render
+  
   const handlePageSlide = () => {
     if (sepClass.includes("first-page")) {
       setSepClass("full-page sec-page");
@@ -163,6 +179,61 @@ function Landing() {
       setSepClass("full-page sec-page");
       setArrowClass("arrow-down");
     }
+  }
+
+  const getRecentRecord = async (days) => {
+    let otherPlayerName;
+    const playerRecords = [0,0,0];
+    if (playerName === "Vic") {
+      otherPlayerName = "Bailey";
+    } else {
+      otherPlayerName = "Vic";
+    }
+    try {
+      const res = await fetch(ip + `/api/getrecentrecord/${todayWordleId}/${todayWordleId - days + 1}`);
+      const data = await res.json();
+      // const sortedData = data.sort((a,b) => {
+      //   if (a.wordle_id < b.wordle_id) return -1;
+      //   if (a.wordle_id > b.wordle_id) return 1;
+
+      //   return a.name.localeCompare(b.name);
+      // });
+      // sortedData.forEach((guess, idx) => {
+      //   if (guess.player_name === otherPlayerName) {
+
+      //   }
+      // })
+      data.forEach((record) => {
+        if (record.player_name === playerName) {
+          const wordleId = record.wordle_id;
+          const guesses = record.guess_number;
+
+          const opponentGuesses = data.find(
+            (r) => r.wordle_id === wordleId && r.player_name !== playerName
+          );
+
+          if (opponentGuesses) {
+            if (guesses < opponentGuesses.guess_number) {
+              playerRecords[0]++;
+            } else if (guesses > opponentGuesses.guess_number) {
+              playerRecords[1]++;
+            } else {
+              playerRecords[2]++;
+            }
+          }
+        }
+      });
+      setRecentPlayerLosses(playerRecords[1]);
+      setRecentPlayerWins(playerRecords[0]);
+      setRecentPlayerTies(playerRecords[2]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleDayChange = (event) => {
+    const newValue = event.target.value;
+    getRecentRecord(parseInt(newValue));
   }
 
   const sum = (arr) => {
@@ -256,7 +327,7 @@ function Landing() {
               <div className="decoration">...</div>
               <div className="how-many">IN {bestSolveNum}</div>
             </div>
-            <div className="in-last">RECORD IN LAST <select className="in-last-input" type="select"><option value="week">7 DAYS</option><option value="week2">14 DAYS</option><option value="month">30 DAYS</option><option value="year">YEAR</option></select></div>
+            <div className="in-last">RECORD IN LAST <select className="in-last-input" type="select" onChange={handleDayChange}><option value="7">7 DAYS</option><option value="14">14 DAYS</option><option value="30">30 DAYS</option><option value="365">YEAR</option></select></div>
             <div className="record-labels">
               <div className="W">W</div>
               <div className="L">L</div>
