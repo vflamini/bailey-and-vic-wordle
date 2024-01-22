@@ -95,21 +95,23 @@ function Landing() {
     let amounts = {};
     let indexes;
     let bestStarter;
-    await fetch(ip + `/api/get/guesses/player_name/${playerName}`)
-      .then(res => res.json())
-      .then(data => {
-        data.forEach(guess => {
-          if (guess.is_correct) {
-            amounts[guess.wordle_id] = guess.guess_number;
-            indexes = getIndexesByPropertyValues(data, {guess_number: 1, wordle_id: guess.wordle_id})
-            incrementOrAdd(words, data[indexes[0]].guess, guess.guess_number);
-          }
-        })
-        console.log(words);
-        bestStarter = getMaxAverageWord(words);
-        setBestStart(bestStarter.word);
-        setGuessesWithBest(bestStarter.average);
+    if (playerName !== '') {
+      await fetch(ip + `/api/get/guesses/player_name/${playerName}`)
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(guess => {
+            if (guess.is_correct) {
+              amounts[guess.wordle_id] = guess.guess_number;
+              indexes = getIndexesByPropertyValues(data, {guess_number: 1, wordle_id: guess.wordle_id})
+              incrementOrAdd(words, data[indexes[0]].guess, guess.guess_number);
+            }
+          })
+          console.log(words);
+          bestStarter = getMaxAverageWord(words);
+          setBestStart(bestStarter.word);
+          setGuessesWithBest(bestStarter.average);
       })
+    }
   }
 
   useEffect(() => {
@@ -152,12 +154,26 @@ function Landing() {
 
   useEffect(() => {
     const getTodayWordleId = async () => {
+      let id;
       try {
-        const res = await fetch(ip + `/api/get/wordle/wordle_date/${encodeURIComponent(fullTodaysDate)}`);
-        const data = await res.json();
-        setTodayWordleId(data[0].wordle_id);
+        const resDate = await fetch(ip + `/api/get/wordle/wordle_date/${fullTodaysDate}`);
+        const dataDate = await resDate.json();
+        if (!dataDate[0] || !dataDate[0].wordle_id) {
+          const resExternal = await fetch(ip + `/solution/${fullTodaysDate}`);
+          const dataExternal = await resExternal.json();
+          id = dataExternal.days_since_launch
+          const insertRes = await fetch(ip + `/api/insert/wordle/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
+          const throwawayData1 = await insertRes.json();
+          const update1Res = await fetch(ip + `/api/update/wordle/wordle_date/${encodeURIComponent(dataExternal.print_date + ' 00:00:00')}/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
+          const throwawayData2 = await update1Res.json();
+          const update2Res = await fetch(ip + `/api/update/wordle/solution/${dataExternal.solution.toUpperCase()}/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
+          const throwawayData3 = await update2Res.json();
+        } else {
+          id = dataDate[0].wordle_id;
+        }
+        setTodayWordleId(id);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
     getTodayWordleId();
@@ -257,7 +273,7 @@ function Landing() {
             <span>E</span>
           </div>
         </h1>
-        <Calendar setSelectedDate={setSelectedDate}/>
+        <Calendar setSelectedDate={setSelectedDate} playerName={playerName} todayWordleId={todayWordleId}/>
         <Link to="/wordle" className='no-underline' state={{wordleDate: selectedDate, playerName: playerName}}>
           <div className="play-btn">
             <div className="shine"></div>
@@ -303,17 +319,16 @@ function Landing() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="more-stats-streak">
-            <div className="streak-label">STREAK</div>
-            <div className="max-streak">LONGEST: {maxStreak}</div>
-          </div>
-          <div className="streak-value">{streak}</div>
-          <div className="more-stats-start">
-            <div className="start-label">BEST STARTING WORD</div>
-            <div className="avg-guess">AVG. GUESSES: {guessesWithBest}</div>
-            <div className="word-value">{bestStart}</div>
-          </div>
+            <div className="more-stats-streak">
+              <div className="streak-label">STREAK</div>
+              <div className="max-streak">LONGEST: {maxStreak}</div>
+            </div>
+            <div className="streak-value">{streak}</div>
+            <div className="more-stats-start">
+              <div className="start-label">BEST STARTING WORD</div>
+              <div className="avg-guess">AVG. GUESSES: {guessesWithBest}</div>
+              <div className="word-value">{bestStart}</div>
+            </div>
           <div className="scroll-down-more-stats" onClick={() => handlePageSlide2()}>
             <FontAwesomeIcon icon={faArrowRight} className={`${arrowClass}`}/>
           </div>
@@ -339,6 +354,10 @@ function Landing() {
               <div className="T">{recentPlayerTies}</div>
             </div>
           </div>          
+          </div>
+          
+          
+          
       </div>
     </>
   )

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import letterScores from '../objects/letterscores';
 import { ip } from '../config/ip';
 import sum from '../functions/arraySum';
 import Keyboard from '../objects/keyboard.jsx';
@@ -118,11 +119,18 @@ function Wordle() {
       })
   }
 
+  const calculateSolveScore = () => {
+
+  }
+
   const getGuesses = async () => {
     await fetch(ip + `/api/getguesses/${wordleId}/${playerName}`)
       .then(res => res.json())
       .then(data => {
         data.forEach(guess => {
+          if (!guess.solve_score) {
+
+          }
           if (guess.is_correct || guess.guess_number === 6) {
             setCorrect(true);
             setShowPopup(true);
@@ -203,7 +211,7 @@ function Wordle() {
           } else {
             setCorrectWord('');
           }
-        })
+      })
     }
 
     const getWordleWordExternal = async () => {

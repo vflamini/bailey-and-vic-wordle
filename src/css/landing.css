@@ -153,7 +153,8 @@ h1 {
   right: 0;
   /* background: linear-gradient(to bottom, rgb(165, 165, 165), rgb(230, 230, 230)); */
   width: 100vw;
-  height: 7vh;
+  height: 60px;
+  z-index: 9999;
   margin-left: -16px;
   opacity: 0;
   animation: fadeIn 2s ease-in-out forwards 3.1s, slideUp 1s ease-in-out forwards 3.1s;
@@ -245,7 +246,7 @@ span:nth-child(6) {
 
 .more-stats-streak {
   position: relative;
-  margin-top: 90%;
+  margin-top: -5%;
   margin-left: -50%;
 }
 
@@ -257,7 +258,7 @@ span:nth-child(6) {
 
 .more-stats-solve {
   position: relative;
-  margin-top: 10%;
+  margin-top: 20%;
   margin-left: -50%;
   height: 100vh;
 }
@@ -286,7 +287,7 @@ span:nth-child(6) {
   max-width: 500px;
   height: auto;
   overflow: hidden;
-  margin-left: 35%;
+  margin-left: 44vw;
   text-align: center;
 }
 
@@ -324,7 +325,7 @@ span:nth-child(6) {
 
 .solve-shower {
   margin-top: 5%;
-  margin-left: 35%;
+  margin-left: 44vw;
   font-size: 75px;
   color: rgb(138, 62, 62);
 }
@@ -374,7 +375,7 @@ span:nth-child(6) {
 .in-last {
   position: fixed;
   left: 0;
-  margin-top: 10%;
+  margin-top: 2%;
   font-size: 30px;
   width: 100vw;
   text-align: center;
@@ -394,7 +395,7 @@ span:nth-child(6) {
   justify-content: space-between;
   width: 65vw;
   margin-left: 46%;
-  margin-top: 12vh;
+  margin-top: 7vh;
   font-size: 40px;
 }
 
