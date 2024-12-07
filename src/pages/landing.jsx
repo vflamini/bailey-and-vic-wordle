@@ -102,11 +102,12 @@ function Landing() {
           data.forEach(guess => {
             if (guess.is_correct) {
               amounts[guess.wordle_id] = guess.guess_number;
-              indexes = getIndexesByPropertyValues(data, {guess_number: 1, wordle_id: guess.wordle_id})
-              incrementOrAdd(words, data[indexes[0]].guess, guess.guess_number);
+              indexes = getIndexesByPropertyValues(data, {guess_number: 1, wordle_id: guess.wordle_id});
+              if (data[indexes[0]]) {
+                incrementOrAdd(words, data[indexes[0]].guess, guess.guess_number);
+              }
             }
           })
-          console.log(words);
           bestStarter = getMaxAverageWord(words);
           setBestStart(bestStarter.word);
           setGuessesWithBest(bestStarter.average);
