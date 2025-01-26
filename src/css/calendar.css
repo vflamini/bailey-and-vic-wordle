@@ -33,7 +33,7 @@
   max-width: 700px;
   border: 2px solid black;
   opacity: 0;
-  animation: fadeIn 2s ease-in-out forwards 2.6s, jump 0.5s ease-in-out forwards 2.6s;
+  animation: fadeIn 0.3s ease-in-out forwards 1s, jump 0.3s ease-in-out forwards 1s;
 }
   
 .month-name {

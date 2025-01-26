@@ -123,7 +123,9 @@ function Calendar({setSelectedDate, playerName, todayWordleId}) {
     }
     setSelectedMonth(newMonth);
     setSelectedYear(newYear);
-    setSelectedDateLong(new Date(newYear, newMonth, 0).toLocaleString('default', { month: 'long' }) + "  " + newYear.toString());
+    setSelectedDateLong(
+      new Date(newYear, newMonth, 0).toLocaleString('default', { month: 'long' }) + "  " + newYear.toString()
+    );
   }
 
   function getFirstDayOfMonth(year, month) {
@@ -155,6 +157,7 @@ function Calendar({setSelectedDate, playerName, todayWordleId}) {
       //   }
       // }
       // if exists get who won
+      let backgroundColor = '';
       if (idRecords[(i + additor).toString()] === "win") {
         color = "green";
       } else if (idRecords[(i + additor).toString()] === "loss") {
@@ -164,12 +167,15 @@ function Calendar({setSelectedDate, playerName, todayWordleId}) {
       } else {
         color = "lightgray";
       }
+      if (!idRecords[(i + additor).toString()]) {
+        backgroundColor = '#784d4a';
+      }
       days.push(
         <div
           key={i}
           className={`day ${isSelected ? 'selected-day' : ''}`}
           onClick={() => handleBoxClick(i)}
-          style={{color: color}}
+          style={{color: color, backgroundColor: backgroundColor}}
         >{i}</div>
       );
     }
