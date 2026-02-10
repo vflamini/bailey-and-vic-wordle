@@ -173,7 +173,6 @@ function Wordle() {
   useEffect(() => {
     // Destructure wordleDate and playerName from location.state with default values of an empty object
     const { wordleDate: initialWordleDate, playerName: initialPlayerName } = location.state || {};
-
     // Set the initial values for wordleDate and playerName in the component state
     setWordleDate(initialWordleDate || '');
     setPlayerName(initialPlayerName || '');
@@ -201,10 +200,12 @@ function Wordle() {
 
   useEffect(() => {
     const wordleStored = async () => {
-      await fetch(ip + `/api/get/wordle/wordle_date/${encodeURIComponent(wordleDate) + ' 00:00:00'}`)
+      console.log(wordleDate)
+      await fetch(ip + `/api/get/wordle/wordle_date/${encodeURIComponent(wordleDate)}`)
         .then(res => res.json())
         .then(data => {
           if (data[0]) {
+            console.log(data[0].wordle_id);
             setCorrectWord(data[0].solution);
             setWordleId(data[0].wordle_id);
             getGuesses();
@@ -220,12 +221,10 @@ function Wordle() {
       const headers = new Headers({
         "Cookie": "nyt-gdpr=0"
       });
-      console.log(formattedDate);
       await fetch(ip + '/solution/' + wordleDate, {
         method: "GET"
       }).then(res => res.json())
         .then(async data => {
-          console.log(data);
           corrWord = data.solution;
           wid = data.days_since_launch;
           await fetch(ip + `/api/insert/wordle/wordle_id/${data.days_since_launch}`, {method: 'POST'})
@@ -331,7 +330,6 @@ function Wordle() {
           lWrongLetters.push(letter);
           tiles[idx] = <div className={`${flipAnimationClass[guessNum]}-${idx + 1} wrong-${idx + 1}`}>{letter}</div>
           if (letter && letter !== '') {
-            console.log(letter);
             shareGuesses[guessNum][idx] = '⬜';
           }
         }
@@ -377,12 +375,10 @@ function Wordle() {
 
   const handleShareClick = async () => {
     try {
-      console.log(shareGuesses);
       const formattedString = `Wordle ${wordleId} ${guessNumber - 1}/6\n\n` + shareGuesses
         .map((list) => list.filter((item) => item !== '').join(''))
         .join("\n")
         .trim();
-      console.log(formattedString);
       if (navigator.share) {
         await navigator.share({
           title: 'Share via',

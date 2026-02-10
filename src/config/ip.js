@@ -1,1 +1,1 @@
-export const ip = "https://api.bailey-and-vic-wordle.xyz";
+export const ip = "https://bv-wordle-server.vflam.dev";

@@ -37,19 +37,20 @@ function Calendar({setSelectedDate, playerName, todayWordleId}) {
       try {
         const resDate = await fetch(ip + `/api/get/wordle/wordle_date/${selectedYear}-${selectedMonth.toString().padStart(2, '0')}-01`);
         const dataDate = await resDate.json();
-        if (!dataDate[0] || !dataDate[0].wordle_id) {
+        if (!dataDate || !dataDate[0] || !dataDate[0].wordle_id) {
           const resExternal = await fetch(ip + `/solution/${selectedYear}-${selectedMonth.toString().padStart(2, '0')}-01`);
           const dataExternal = await resExternal.json();
           id = dataExternal.days_since_launch
-          const insertRes = await fetch(ip + `/api/insert/wordle/wordle_id${dataExternal.days_since_launch}`, {method: 'POST'})
+          const insertRes = await fetch(ip + `/api/insert/wordle/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
           const throwawayData1 = await insertRes.json();
-          const update1Res = await fetch(ip + `/api/update/wordle/wordle_date/${encodeURIComponent(dataExternal.print_date + ' 00:00:00')}/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
+          const update1Res = await fetch(ip + `/api/update/wordle/wordle_date/${encodeURIComponent(dataExternal.print_date)}/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
           const throwawayData2 = await update1Res.json();
           const update2Res = await fetch(ip + `/api/update/wordle/solution/${dataExternal.solution.toUpperCase()}/wordle_id/${dataExternal.days_since_launch}`, {method: 'POST'})
           const throwawayData3 = await update2Res.json();
         } else {
           id = dataDate[0].wordle_id;
         }
+        console.log(id);
         setCurrMonthWId(id);
         const res = await fetch(ip + `/api/getrecentrecord/${todayWordleId}/${id}`);
         const data = await res.json();
@@ -68,7 +69,6 @@ function Calendar({setSelectedDate, playerName, todayWordleId}) {
           if (record.player_name === playerName) {
             const wordleId = record.wordle_id;
             const guesses = record.guess_number;
-  
             const opponentGuesses = data.find(
               (r) => r.wordle_id === wordleId && r.player_name !== playerName
             );
